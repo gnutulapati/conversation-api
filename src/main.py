@@ -10,6 +10,7 @@ from src.middleware.error_handler import (
     http_exception_handler,
     validation_exception_handler,
 )
+from src.middleware.rate_limiter import limiter, rate_limit_handler, RateLimitExceeded
 from src.auth.routes import router as auth_router
 from src.conversations.routes import router as conversations_router
 from src.messages.routes import router as messages_router
@@ -30,6 +31,10 @@ app = FastAPI(
     docs_url="/docs",
     redoc_url="/redoc",
 )
+
+# Rate Limiter
+app.state.limiter = limiter
+app.add_exception_handler(RateLimitExceeded, rate_limit_handler)
 
 # CORS
 app.add_middleware(
